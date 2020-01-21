@@ -5,6 +5,7 @@ if test "$V" = 1 -o "$V" = 2; then
     set -x
 fi
 
+ARCH=${ARCH-x86}
 prefix=${prefix-/usr/local}
 MES_PREFIX=${MES_PREFIX-mes}
 MES_STACK=${MES_STACK-10000000}
@@ -33,13 +34,22 @@ CPPFLAGS="
 -D CONFIG_TCC_LIBTCC1=1
 -D CONFIG_USE_LIBGCC=1
 -D TCC_MES_LIBC=1
--D TCC_TARGET_I386=1
 "
+if test "$ARCH" = "x86_64" ; then
+    CPPFLAGS="$CPPFLAGS -D TCC_TARGET_I386=0"
+else
+    CPPFLAGS="$CPPFLAGS -D TCC_TARGET_I386=1"
+fi
+
 if test -n "$ONE_SOURCE"; then
     objects="tcc.o"
     CPPFLAGS="$CPPFLAGS -D ONE_SOURCE=1"
 else
-    objects="tcc.o tccpp.o tccgen.o tccelf.o tccrun.o i386-gen.o i386-link.o i386-asm.o tccasm.o libtcc.o"
+    if test "$ARCH" = "x86_64" ; then
+        objects="tcc.o tccpp.o tccgen.o tccelf.o tccrun.o x86_64-gen.o x86_64-link.o x86_64-asm.o tccasm.o libtcc.o"
+    elif test "$ARCH" = "x86" ; then
+        objects="tcc.o tccpp.o tccgen.o tccelf.o tccrun.o i386-gen.o i386-link.o i386-asm.o tccasm.o libtcc.o"
+    fi
 fi
 
 CFLAGS=
@@ -52,16 +62,34 @@ fi
 for o in $objects; do
     i=$(basename $o .o)
     [ -z "$V" ] && echo "  CC         $i.c"
-    sh $mescc\
-       -c\
-       -o $o\
-       $CPPFLAGS\
-       $CFLAGS\
-       $i.c
+    if [ "${o}" = "i386-asm.o" ] ; then
+        sh $mescc\
+           -c\
+           -o $i.s\
+           -S\
+           $CPPFLAGS\
+           $CFLAGS\
+           $i.c
+        sed -i "s/\%sil/\%esi/" i386-asm.s
+        sed -i "s/\%si/\%rsi/" i386-asm.s
+        sh $mescc\
+           -c\
+           -o $o\
+           $CPPFLAGS\
+           $CFLAGS\
+           $i.s
+    else
+        sh $mescc\
+           -c\
+           -o $o\
+           $CPPFLAGS\
+           $CFLAGS\
+           $i.c
+    fi
 done
 
 [ -z "$V" ] && echo "  CCLD       mes-tcc"
-sh $mescc $verbose -o mes-tcc $objects -L mes-source/mescc-lib -L mes-source/lib -l c+tcc
+sh $mescc $verbose -o mes-tcc $objects -L /../mes/mescc-lib -L /../mes/lib -l c+tcc
 
 CC=${CC-mescc}
 
@@ -104,41 +132,41 @@ REBUILD_LIBC=${REBUILD_LIBC-t}
 if [ -n "$REBUILD_LIBC" ]; then
     for i in 1 i n; do
         rm -f crt$i.o;
-        cp -f $MES_PREFIX/lib/crt$i.c .
-        ##cp -f $MES_PREFIX/gcc-lib/x86-mes/crt$i.c .
+        #cp -f $MES_PREFIX/lib/crt$i.c .
+        cp -f $MES_PREFIX/gcc-lib/${ARCH}-mes/crt$i.c .
         $CC $CPPFLAGS $CFLAGS -static -nostdlib -nostdinc -c crt$i.c
     done
 
     rm -f libc.a
-    cp -f ${MES_PREFIX}/lib/libc+gnu.c libc.c
-    ##cp -f ${MES_PREFIX}/gcc-lib/x86-mes/libc+gnu.c libc.c
+    #cp -f ${MES_PREFIX}/lib/libc+gnu.c libc.c
+    cp -f ${MES_PREFIX}/gcc-lib/${ARCH}-mes/libc+gnu.c libc.c
     $CC -c $CPPFLAGS $CFLAGS libc.c
     $AR cr libc.a libc.o
 
     rm -f libtcc1.a
-    cp -f ${MES_PREFIX}/lib/libtcc1.c .
-    ##cp -f ${MES_PREFIX}/gcc-lib/x86-mes/libtcc1.c .
+    #cp -f ${MES_PREFIX}/lib/libtcc1.c .
+    cp -f ${MES_PREFIX}/gcc-lib/${ARCH}-mes/libtcc1.c .
     $CC -c $CPPFLAGS $CFLAGS libtcc1.c
     $AR cr libtcc1.a libtcc1.o
 
     rm -f libgetopt.a
-    cp -f ${MES_PREFIX}/lib/libgetopt.c .
-    ##cp -f ${MES_PREFIX}/gcc-lib/x86-mes/libgetopt.c .
+    #cp -f ${MES_PREFIX}/lib/libgetopt.c .
+    cp -f ${MES_PREFIX}/gcc-lib/${ARCH}-mes/libgetopt.c .
     $CC -c $CPPFLAGS $CFLAGS libgetopt.c
     $AR cr libgetopt.a libgetopt.o
 
 else
-    cp -f $MES_PREFIX/lib/crt1.o .
-    cp -f $MES_PREFIX/lib/crti.o .
-    cp -f $MES_PREFIX/lib/crtn.o .
-    cp -f $MES_PREFIX/lib/libc+gnu.a .
-    cp -f $MES_PREFIX/lib/libtcc1.a .
+    #cp -f $MES_PREFIX/lib/crt1.o .
+    #cp -f $MES_PREFIX/lib/crti.o .
+    #cp -f $MES_PREFIX/lib/crtn.o .
+    #cp -f $MES_PREFIX/lib/libc+gnu.a .
+    #cp -f $MES_PREFIX/lib/libtcc1.a .
 
-    ## cp -f $MES_PREFIX/gcc-lib/libc+gnu.a libc.a
-    ## cp -f $MES_PREFIX/gcc-lib/libtcc1.a .
-    ## cp -f $MES_PREFIX/gcc-lib/crt1.o .
-    ## cp -f $MES_PREFIX/gcc-lib/crti.o .
-    ## cp -f $MES_PREFIX/gcc-lib/crtn.o .
+    cp -f $MES_PREFIX/gcc-lib/libc+gnu.a libc.a
+    cp -f $MES_PREFIX/gcc-lib/libtcc1.a .
+    cp -f $MES_PREFIX/gcc-lib/crt1.o .
+    cp -f $MES_PREFIX/gcc-lib/crti.o .
+    cp -f $MES_PREFIX/gcc-lib/crtn.o .
 fi
 
 mkdir -p $prefix/lib/tcc
@@ -164,8 +192,8 @@ AR='./tcc -ar'
 if true; then
     for i in 1 i n; do
         rm -f crt$i.o;
-        cp -f $MES_PREFIX/lib/crt$i.c .
-        ##cp -f $MES_PREFIX/gcc-lib/x86-mes/crt$i.c .
+        #cp -f $MES_PREFIX/lib/crt$i.c .
+        cp -f $MES_PREFIX/gcc-lib/${ARCH}-mes/crt$i.c .
         $CC $CPPFLAGS $CFLAGS -static -nostdlib -nostdinc -c crt$i.c
     done
 
