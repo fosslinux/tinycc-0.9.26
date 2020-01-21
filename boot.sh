@@ -37,13 +37,7 @@ MES_PREFIX=${MES_PREFIX-mes}
 C_INCLUDE_PATH=${C_INCLUDE_PATH-$MES_PREFIX/include}
 LIBRARY_PATH=${LIBRARY_PATH-..$MES_PREFIX/lib}
 
-if [ -z "$interpreter" -a -n "$GUIX" ]; then
-    interpreter=$($GUIX environment --ad-hoc patchelf -- patchelf --print-interpreter $(guix build --system=i686-linux hello)/bin/hello)
-elif [ -x /lib/ld-linux.so.2 ]; then
-    # legacy non-GuixSD support
-    interpreter=/lib/ld-linux.so.2
-fi
-interpreter=${interpreter-interpreter}
+interpreter=/lib/ld-linux.so.2
 
 if [ "$PROGRAM_PREFIX" = "boot0-" ]; then
     BOOT_CPPFLAGS=${BOOT_CPPFLAGS-"
