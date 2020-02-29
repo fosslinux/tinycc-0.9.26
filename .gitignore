@@ -54,3 +54,22 @@ tests/libtcc_test
 tests/vla_test
 tests/hello
 tests/tests2/fred.txt
+
+# Build artiacts from our special build system
+crt1.c
+crti.c
+crtn.c
+i386-asm.s
+i386-gen.s
+i386-link.s
+libc.c
+libgetopt.c
+libtcc.s
+libtcc1.c
+tcc.s
+tccasm.s
+tccelf.s
+tccgen.s
+tccpp.s
+tccrun.s
+x86-mes/
