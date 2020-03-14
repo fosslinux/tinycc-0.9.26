@@ -13,6 +13,11 @@
 #
 # bashism: TMPN="${TMPDIR1}/tcc-conf-${RANDOM}-$$-${RANDOM}.c"
 
+# Inject gash code
+export REPO=$(pwd)/../..
+export PATH=${REPO}/sources/gash-assets:${REPO}/sources/bin:${REPO}/sources/staging/bin:$PATH
+. ${REPO}/sources/gash-assets/source.sh
+
 TMPN="./conftest-$$"
 TMPH=$TMPN.h
 

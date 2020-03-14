@@ -5,6 +5,11 @@ if test "$V" = 1 -o "$V" = 2; then
     set -x
 fi
 
+# Inject gash code
+export REPO=$(pwd)/../..
+export PATH=${REPO}/sources/gash-assets:${REPO}/sources/bin:${REPO}/sources/staging/bin:$PATH
+. ${REPO}/sources/gash-assets/source.sh
+
 ARCH=${ARCH-x86}
 prefix=${prefix-/usr/local}
 MES_PREFIX=${MES_PREFIX-mes}
@@ -61,34 +66,34 @@ fi
 
 for o in $objects; do
     i=$(basename $o .o)
-    [ -z "$V" ] && echo "  CC         $i.c"
-    if [ "${o}" = "i386-asm.o" ] ; then
-        sh $mescc\
-           -c\
-           -o $i.s\
-           -S\
-           $CPPFLAGS\
-           $CFLAGS\
-           $i.c
-        sed -i "s/\%sil/\%esi/" i386-asm.s
-        sed -i "s/\%si/\%rsi/" i386-asm.s
+    test -z "$V"  && echo "  CC         $i.c"
+#    if test "${o}" = "i386-asm.o" ; then
+#        sh $mescc\
+#           -c\
+#           -o $i.s\
+#           -S\
+#           $CPPFLAGS\
+#           $CFLAGS\
+#           $i.c
+#        sed -i "s/\%sil/\%esi/" i386-asm.s
+#        sed -i "s/\%si/\%rsi/" i386-asm.s
+#        sh $mescc\
+#           -c\
+#           -o $o\
+#           $CPPFLAGS\
+#           $CFLAGS\
+#           $i.s
+#    else
         sh $mescc\
            -c\
            -o $o\
            $CPPFLAGS\
            $CFLAGS\
-           $i.s
-    else
-        sh $mescc\
-           -c\
-           -o $o\
-           $CPPFLAGS\
-           $CFLAGS\
            $i.c
-    fi
+#    fi
 done
 
-[ -z "$V" ] && echo "  CCLD       mes-tcc"
+test -z "$V"  && echo "  CCLD       mes-tcc"
 sh $mescc $verbose -o mes-tcc $objects -L /../mes/mescc-lib -L /../mes/lib -l c+tcc
 
 CC=${CC-mescc}
@@ -129,7 +134,7 @@ CFLAGS=
 
 REBUILD_LIBC=${REBUILD_LIBC-t}
 
-if [ -n "$REBUILD_LIBC" ]; then
+if test -n "$REBUILD_LIBC" ; then
     for i in 1 i n; do
         rm -f crt$i.o;
         #cp -f $MES_PREFIX/lib/crt$i.c .

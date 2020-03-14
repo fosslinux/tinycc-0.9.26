@@ -2,6 +2,11 @@
 
 set -e
 
+# Inject gash code
+export REPO=$(pwd)/../..
+export PATH=${REPO}/sources/gash-assets:${REPO}/sources/bin:${REPO}/sources/staging/bin:$PATH
+. ${REPO}/sources/gash-assets/source.sh
+
 export V
 export MES_DEBUG
 export MES_PREFIX
