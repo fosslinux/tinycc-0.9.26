@@ -59,7 +59,7 @@ tests/tests2/fred.txt
 crt1.c
 crti.c
 crtn.c
-i386-asm.s
+i386-asm.s*
 i386-gen.s
 i386-link.s
 libc.c
@@ -72,4 +72,4 @@ tccelf.s
 tccgen.s
 tccpp.s
 tccrun.s
-x86-mes/
+/x86-mes/
