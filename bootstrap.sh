@@ -1,4 +1,3 @@
-#! /bin/sh
 set -e
 
 if test "$V" = 1 -o "$V" = 2; then
@@ -67,30 +66,12 @@ fi
 for o in $objects; do
     i=$(basename $o .o)
     test -z "$V"  && echo "  CC         $i.c"
-#    if test "${o}" = "i386-asm.o" ; then
-#        sh $mescc\
-#           -c\
-#           -o $i.s\
-#           -S\
-#           $CPPFLAGS\
-#           $CFLAGS\
-#           $i.c
-#        sed -i "s/\%sil/\%esi/" i386-asm.s
-#        sed -i "s/\%si/\%rsi/" i386-asm.s
-#        sh $mescc\
-#           -c\
-#           -o $o\
-#           $CPPFLAGS\
-#           $CFLAGS\
-#           $i.s
-#    else
-        sh $mescc\
-           -c\
-           -o $o\
-           $CPPFLAGS\
-           $CFLAGS\
-           $i.c
-#    fi
+    sh $mescc\
+       -c\
+       -o $o\
+       $CPPFLAGS\
+       $CFLAGS\
+       $i.c
 done
 
 test -z "$V"  && echo "  CCLD       mes-tcc"
