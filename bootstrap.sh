@@ -4,11 +4,6 @@ if test "$V" = 1 -o "$V" = 2; then
     set -x
 fi
 
-# Inject gash code
-export REPO=$(pwd)/../..
-export PATH=${REPO}/sources/gash-assets:${REPO}/sources/bin:${REPO}/sources/staging/bin:$PATH
-. ${REPO}/sources/gash-assets/source.sh
-
 ARCH=${ARCH-x86}
 prefix=${prefix-/usr/local}
 MES_PREFIX=${MES_PREFIX-mes}

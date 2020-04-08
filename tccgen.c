@@ -1850,7 +1850,7 @@ static void gen_opif(int op)
         case '-': f1 -= f2; break;
         case '*': f1 *= f2; break;
         case '/': 
-#if HAVE_FLOAT
+#if 0 
             if (f2 == 0.0) {
                 if (const_wanted)
                     tcc_error("division by zero in constant");
@@ -2279,7 +2279,7 @@ static void gen_cast(CType *type)
             else if (sbt == VT_DOUBLE)
                 vtop->c.ld = vtop->c.d;
 
-#if HAVE_FLOAT
+#if 0 
             if (df) {
                 if ((sbt & VT_BTYPE) == VT_LLONG) {
                     if ((sbt & VT_UNSIGNED) || !(vtop->c.i >> 63))

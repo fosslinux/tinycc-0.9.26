@@ -2,29 +2,29 @@
 
 set -e
 
-if [ "$V" = 1 -o "$V" = 2 ]; then
+if test "$V" = 1 -o "$V" = 2 ; then
     set -x
 fi
 
-if [ "$TCC" = ./mes-tcc ]; then
+if test "$TCC" = ./mes-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot0-}
-elif [ "$TCC" = ./boot0-tcc ]; then
+elif test "$TCC" = ./boot0-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot1-}
-elif [ "$TCC" = ./boot1-tcc ]; then
+elif test "$TCC" = ./boot1-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot2-}
-elif [ "$TCC" = ./boot2-tcc ]; then
+elif test "$TCC" = ./boot2-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot3-}
-elif [ "$TCC" = ./boot3-tcc ]; then
+elif test "$TCC" = ./boot3-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot4-}
-elif [ "$TCC" = ./boot4-tcc ]; then
+elif test "$TCC" = ./boot4-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot5-}
-elif [ "$TCC" = ./boot5-tcc ]; then
+elif test "$TCC" = ./boot5-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot6-}
-elif [ "$TCC" = ./boot6-tcc ]; then
+elif test "$TCC" = ./boot6-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot7-}
-elif [ "$TCC" = ./boot7-tcc ]; then
+elif test "$TCC" = ./boot7-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot8-}
-elif [ "$TCC" = ./boot8-tcc ]; then
+elif test "$TCC" = ./boot8-tcc ; then
     PROGRAM_PREFIX=${PROGRAM_PREFIX-boot9-}
 fi
 
@@ -39,7 +39,7 @@ LIBRARY_PATH=${LIBRARY_PATH-..$MES_PREFIX/lib}
 
 interpreter=/lib/ld-linux.so.2
 
-if [ "$PROGRAM_PREFIX" = "boot0-" ]; then
+if test "$PROGRAM_PREFIX" = "boot0-" ; then
     BOOT_CPPFLAGS=${BOOT_CPPFLAGS-"
         -D inline=
     -D BOOTSTRAP=1
@@ -50,7 +50,7 @@ if [ "$PROGRAM_PREFIX" = "boot0-" ]; then
     "}
     LIBTCC1=-ltcc1
     LIBTCC1=
-elif [ "$PROGRAM_PREFIX" = "boot1-" ]; then
+elif test "$PROGRAM_PREFIX" = "boot1-" ; then
     BOOT_CPPFLAGS=${BOOT_CPPFLAGS-"
     -D BOOTSTRAP=1
     -D HAVE_BITFIELD=1
@@ -61,7 +61,7 @@ elif [ "$PROGRAM_PREFIX" = "boot1-" ]; then
     "}
     LIBTCC1=-ltcc1
     LIBTCC1=
-elif [ "$PROGRAM_PREFIX" = "boot2-" ]; then
+elif test "$PROGRAM_PREFIX" = "boot2-" ; then
     BOOT_CPPFLAGS=${BOOT_CPPFLAGS-"
     -D BOOTSTRAP=1
     -D HAVE_BITFIELD=1
@@ -73,7 +73,7 @@ elif [ "$PROGRAM_PREFIX" = "boot2-" ]; then
     "}
     LIBTCC1=-ltcc1
     LIBTCC1=
-elif [ "$PROGRAM_PREFIX" = "boot3-" ]; then
+elif test "$PROGRAM_PREFIX" = "boot3-" ; then
     BOOT_CPPFLAGS=${BOOT_CPPFLAGS-"
     -D BOOTSTRAP=1
     -D HAVE_FLOAT=1
