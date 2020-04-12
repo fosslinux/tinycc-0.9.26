@@ -61,7 +61,7 @@ fi
 for o in $objects; do
     i=$(basename $o .o)
     test -z "$V"  && echo "  CC         $i.c"
-    sh $mescc\
+    $mescc\
        -c\
        -o $o\
        $CPPFLAGS\
@@ -70,7 +70,7 @@ for o in $objects; do
 done
 
 test -z "$V"  && echo "  CCLD       mes-tcc"
-sh $mescc $verbose -o mes-tcc $objects -L /../mes/mescc-lib -L /../mes/lib -l c+tcc
+$mescc $verbose -o mes-tcc $objects -L ../mes/mescc-lib -L ../mes/lib -l c+tcc
 
 CC=${CC-mescc}
 
